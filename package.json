@@ -1,0 +1,39 @@
+{
+  "name": "tutor",
+  "version": "1.0.0",
+  "description": "An app developed when I was working part-time as an English tutor",
+  "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caozhanhao/tutor.git"
+  },
+  "keywords": [
+    "english-tutor"
+  ],
+  "author": "caozhanhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/caozhanhao/tutor/issues"
+  },
+  "homepage": "https://github.com/caozhanhao/tutor#readme",
+  "devDependencies": {
+    "@electron/fuses": "^1.8.0",
+    "electron": "^31.2.0"
+  },
+  "dependencies": {
+    "electron-is-dev": "^3.0.1",
+    "electron-squirrel-startup": "^1.0.1"
+  },
+  "build": {
+    "productName": "Tutor",
+    "copyright": "Copyright © 2024 caozhanhao",
+    "publish": [
+      "github"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  }
+}

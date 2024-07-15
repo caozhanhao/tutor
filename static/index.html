@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <link rel="stylesheet" href="./mdui.css">
+    <link rel="stylesheet" href="./tutor.css">
+    <script src="./mdui.global.js"></script>
+    <script src="./docx.min.js"></script>
+    <script src="../src/renderer.js"></script>
+    <title>Tutor</title>
+</head>
+
+<body>
+    <mdui-layout>
+        <mdui-top-app-bar>
+            <mdui-top-app-bar-title>练习生成器</mdui-top-app-bar-title>
+            <div style="flex-grow: 1"></div>
+            <mdui-dropdown>
+                <mdui-button-icon icon="light_mode" slot="trigger"></mdui-button-icon>
+                <mdui-menu selects="single" value="light-mode" id="theme-selector">
+                    <mdui-menu-item value="light-mode" class="light-mode-option">亮色模式</mdui-menu-item>
+                    <mdui-menu-item value="dark-mode" class="dark-mode-option">暗色模式</mdui-menu-item>
+                    <mdui-divider></mdui-divider>
+                    <mdui-menu-item value="auto-mode" class="auto-mode-option">跟随系统</mdui-menu-item>
+                </mdui-menu>
+            </mdui-dropdown>
+            <mdui-button-icon icon="info" onclick="document.getElementById('info-dialog').open=true"></mdui-button-icon>
+        </mdui-top-app-bar>
+        <mdui-layout-main>
+            <mdui-dialog close-on-esc close-on-overlay-click id="info-dialog">
+                <mdui-icon slot="icon" name="info"></mdui-icon>
+                <span slot="description">
+                    <mdui-list>
+                        <mdui-list-item icon="commit" onclick="openGithubProject()"
+                            id="version-info">版本：-</mdui-list-item>
+                        <mdui-list-item icon="code" onclick="openGithubProfile()">开发：caozhanhao</mdui-list-item>
+                    </mdui-list>
+                </span>
+                <mdui-button slot="action" variant="tonal" onclick="checkUpdateGitee()">检查更新</mdui-button>
+                <mdui-button slot="action" variant="tonal"
+                    onclick="document.getElementById('info-dialog').open=false">关闭</mdui-button>
+            </mdui-dialog>
+            <mdui-dialog close-on-esc close-on-overlay-click id="release-dialog">
+                <mdui-icon slot="icon" name="new_releases"></mdui-icon>
+                <span slot="headline" id="release-headline"></span>
+                <span slot="description" id="release-description"></span>
+                <mdui-button slot="action" variant="tonal"
+                    onclick="document.getElementById('release-dialog').open=false">暂不更新</mdui-button>
+                <mdui-button slot="action" variant="tonal" id="release-btn">立即更新</mdui-button>
+            </mdui-dialog>
+            <mdui-list id="exer-words">
+            </mdui-list>
+        </mdui-layout-main>
+
+        <div style="position: relative;overflow: hidden;">
+            <mdui-bottom-app-bar>
+                <mdui-text-field label="单词" icon="search" id="input-word" autocomplete="off"
+                    class="autocomplete"></mdui-text-field>
+                <mdui-segmented-button-group>
+                    <mdui-segmented-button onclick="addWord()" class="exer-button" id="add-btn">添加
+                        <mdui-icon slot="icon" name="add"></mdui-icon>
+                    </mdui-segmented-button>
+                    <mdui-segmented-button onclick="genExer()" class="exer-button" id="gen-btn">生成
+                        <mdui-icon slot="icon" name="check"></mdui-icon>
+                    </mdui-segmented-button>
+                </mdui-segmented-button-group>
+            </mdui-bottom-app-bar>
+        </div>
+    </mdui-layout>
+</body>
+
+</html>
