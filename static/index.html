@@ -7,9 +7,6 @@
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <link rel="stylesheet" href="./mdui.css">
     <link rel="stylesheet" href="./tutor.css">
-    <script src="./mdui.global.js"></script>
-    <script src="./docx.min.js"></script>
-    <script src="../src/renderer.js"></script>
     <title>Tutor</title>
 </head>
 
@@ -39,7 +36,7 @@
                         <mdui-list-item icon="code" onclick="openGithubProfile()">开发：caozhanhao</mdui-list-item>
                     </mdui-list>
                 </span>
-                <mdui-button slot="action" variant="tonal" onclick="checkUpdateGitee()">检查更新</mdui-button>
+                <mdui-button slot="action" variant="tonal" onclick="checkUpdate()">检查更新</mdui-button>
                 <mdui-button slot="action" variant="tonal"
                     onclick="document.getElementById('info-dialog').open=false">关闭</mdui-button>
             </mdui-dialog>
@@ -71,5 +68,7 @@
         </div>
     </mdui-layout>
 </body>
-
+<script src="./mdui.global.js"></script>
+<script src="./docx.min.js"></script>
+<script src="../src/renderer.js"></script>
 </html>

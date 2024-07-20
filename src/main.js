@@ -54,14 +54,14 @@ function lookup(w)
 
 function getAllWords()
 {
-    var ret = new Array()
+    var ret = new Set()
     voc["books"].forEach((book) =>
     {
         book["units"].forEach((unit) =>
         {
             unit["words"].forEach((word) =>
             {
-                ret.push(word.word)
+                ret.add(word.word)
             })
         })
     })

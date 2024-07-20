@@ -1,4 +1,4 @@
-let allWords = []
+let allWords = new Set();
 let currentFocus = -1
 let wordsCache = {}
 let currVersion = ""
@@ -42,11 +42,8 @@ function id2bookname(id)
 
 function word2id(word)
 {
-    let id = word.word
-    id.replace(' ', '-')
-    id.replace('?', '-')
-    id.replace('.', '-')
-    id.replace('·', '-')
+    let id = word.word.replaceAll(' ', '-').replaceAll('?', '-').replaceAll('.', '-')
+        .replaceAll('·', '-').replaceAll('\'', '-').replaceAll('"', '-')
     id += word.book.toString() + word.unit.toString()
     return id
 }
@@ -63,6 +60,7 @@ function addWord()
     let input = document.getElementById("input-word");
     let word = input.value
     let list = document.getElementById("exer-words")
+
     lookup(word).then((res) =>
     {
         res.forEach(word =>
@@ -200,11 +198,11 @@ function openReleaseDialog(latestVersion, description, link)
     dialog.open = true
 }
 
-function checkUpdateGitee()
+function checkUpdate()
 {
     try
     {
-        fetch("https://gitee.com/api/v5/repos/cmvy2020/tutor/releases/latest")
+        fetch("https://api.github.com/repos/caozhanhao/tutor/releases/latest")
             .then(response => response.json()).then(
                 (res) =>
                 {
@@ -255,7 +253,7 @@ function addAutoComplete(input)
                 let b = document.createElement("div")
                 b.innerHTML = word.slice(0, pos) + "<strong>" + word.slice(pos, pos + this.value.length)
                     + "</strong>" + word.slice(pos + this.value.length)
-                b.innerHTML += "<input type='hidden' value='" + word + "'>"
+                b.innerHTML += "<input type='hidden' value=\"" + word + "\">"
                 b.addEventListener("click", function (e)
                 {
                     input.value = this.getElementsByTagName("input")[0].value
