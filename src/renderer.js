@@ -20,6 +20,7 @@ async function init()
     allWords = await window.tutor.getAllWords()
     currVersion = await window.tutor.getVersion()
 }
+
 init()
 
 async function lookup(word)
@@ -124,7 +125,14 @@ function genExer()
         return;
     }
 
-    let x = []
+    let exerDoc = []
+    let answerDoc = [
+        new docx.Paragraph({ children: [] }),
+        new docx.Paragraph({
+            children: [
+                new docx.TextRun("-------------------------------------------------------参考答案-------------------------------------------------------")
+            ]
+        })]
     for (let i = 0; i < exerWords.length; ++i)
     {
         let exerType = exerWords[i].getElementsByClassName("exer-type")[0].value
@@ -134,23 +142,40 @@ function genExer()
         {
             let meaningRun = new docx.TextRun(word.meaning)
             let spaceRun = new docx.TextRun('_'.repeat(word.word.length * 2))
-            let paragraph = new docx.Paragraph({
+            let answerRun = new docx.TextRun(" " + word.word)
+
+            let exerParagraph = new docx.Paragraph({
                 children: [
                     meaningRun, spaceRun
                 ]
             })
-            x.push(paragraph)
+
+            let answerParagraph = new docx.Paragraph({
+                children: [
+                    meaningRun, answerRun
+                ]
+            })
+            exerDoc.push(exerParagraph)
+            answerDoc.push(answerParagraph)
         }
         else if (exerType == "en2cn")
         {
             let wordRun = new docx.TextRun(word.word)
             let spaceRun = new docx.TextRun('_'.repeat(word.meaning.length))
-            let paragraph = new docx.Paragraph({
+            let answerRun = new docx.TextRun(" " + word.meaning)
+
+            let exerParagraph = new docx.Paragraph({
                 children: [
                     wordRun, spaceRun
                 ]
             })
-            x.push(paragraph)
+            let answerParagraph = new docx.Paragraph({
+                children: [
+                    wordRun, answerRun
+                ]
+            })
+            exerDoc.push(exerParagraph)
+            answerDoc.push(answerParagraph)
         }
     }
 
@@ -158,7 +183,7 @@ function genExer()
         sections: [
             {
                 properties: {},
-                children: x
+                children: exerDoc.concat(answerDoc)
             }
         ]
     })
@@ -194,41 +219,82 @@ function openReleaseDialog(latestVersion, description, link)
 
     headline.innerHTML = "Tutor v" + latestVersion
     descr.innerHTML = description
-    btn.onclick = () => { location.href = link; document.getElementById("release-dialog").open = false }
+    btn.onclick = () => { 
+        location.href = link
+        document.getElementById("release-dialog").open = false 
+    }
     dialog.open = true
 }
 
+function versionCmp(v1, v2)
+{
+    let a1 = v1.split('.')
+    let a2 = v2.split('.')
+    const length = Math.max(v1.length, v2.length)
+    while (v1.length < length)
+        v1.push('0')
+    while (v2.length < length)
+        v2.push('0')
+
+    for (let i = 0; i < length; i++)
+    {
+        const n1 = parseInt(v1[i])
+        const n2 = parseInt(v2[i])
+        if (n1 > n2)
+            return 1
+        else if (n1 < n2)
+            return -1
+    }
+    return 0
+}
+
+
 function checkUpdate()
 {
-    try
-    {
-        fetch("https://api.github.com/repos/caozhanhao/tutor/releases/latest")
-            .then(response => response.json()).then(
-                (res) =>
+    let btn = document.getElementById("check-update-btn")
+    btn.setAttribute("loading", "")
+    btn.innerHTML =  "正在检查更新"
+    const svr = "http://update.tutor.mkfs.tech/";
+    fetch(svr)
+        .then(response =>
+        {
+            btn.removeAttribute("loading")
+            btn.innerHTML = "检查更新"
+            if (!response.ok)
+                throw Error(response.status + " " + response.statusText)
+            else
+                return response.json()
+        }).then(
+            (res) =>
+            {
+                let latestVersion = res.tag_name.slice(1)
+                const cmp = versionCmp(currVersion, latestVersion)
+                if (cmp === 0)
+                    mdui.snackbar({ "message": "当前已为最新版本", "placement": "top" })
+                else if (cmp === 1)
                 {
-                    let latestVersion = res.tag_name.slice(1)
-                    if (currVersion == latestVersion)
+                    mdui.snackbar({
+                        "message": "警告：本地版本(" + currVersion + ") 比远程版本(" + latestVersion + ")更新。"
+                        , "placement": "top"
+                    })
+                }
+                else
+                {
+                    for (let i = 0; i < res.assets.length; ++i)
                     {
-                        mdui.snackbar({ "message": "当前已为最新版本", "placement": "top" })
-                    }
-                    else
-                    {
-                        for (let i = 0; i < res.assets.length; ++i)
+                        let n = res.assets[i].name
+                        if (n.slice(n.lastIndexOf(".")) == ".exe")
                         {
-                            let n = res.assets[i].name
-                            if (n.slice(n.lastIndexOf(".")) == ".exe")
-                            {
-                                openReleaseDialog(latestVersion, res.body, res.assets[i].browser_download_url)
-                                return
-                            }
+                            openReleaseDialog(latestVersion, res.body, svr + res.assets[i].id)
+                            return
                         }
                     }
-                })
-    }
-    finally
-    {
-        mdui.snackbar({ "message": "检查更新失败", "placement": "top" })
-    }
+                }
+            })
+        .catch((error) =>
+        {
+            mdui.snackbar({ "message": "检查更新失败, " + error, "placement": "top" })
+        });
 }
 
 function addAutoComplete(input)
@@ -369,7 +435,6 @@ function addAutoComplete(input)
 
 window.onload = function ()
 {
-    document.getElementById("version-info").innerHTML = "版本：" + currVersion
     addAutoComplete(document.getElementById("input-word"))
     document.getElementsByClassName("light-mode-option")[0].addEventListener('click', (event) =>
     {

@@ -24,7 +24,8 @@
                     <mdui-menu-item value="auto-mode" class="auto-mode-option">跟随系统</mdui-menu-item>
                 </mdui-menu>
             </mdui-dropdown>
-            <mdui-button-icon icon="info" onclick="document.getElementById('info-dialog').open=true"></mdui-button-icon>
+            <mdui-button-icon icon="info" onclick="document.getElementById('version-info').innerHTML = '版本：'
+             + currVersion;document.getElementById('info-dialog').open=true"></mdui-button-icon>
         </mdui-top-app-bar>
         <mdui-layout-main>
             <mdui-dialog close-on-esc close-on-overlay-click id="info-dialog">
@@ -36,7 +37,7 @@
                         <mdui-list-item icon="code" onclick="openGithubProfile()">开发：caozhanhao</mdui-list-item>
                     </mdui-list>
                 </span>
-                <mdui-button slot="action" variant="tonal" onclick="checkUpdate()">检查更新</mdui-button>
+                <mdui-button slot="action" variant="tonal" id="check-update-btn" onclick="checkUpdate()">检查更新</mdui-button>
                 <mdui-button slot="action" variant="tonal"
                     onclick="document.getElementById('info-dialog').open=false">关闭</mdui-button>
             </mdui-dialog>
