@@ -1,8 +1,8 @@
 {
   "name": "tutor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "An app developed when I was working part-time as an English tutor",
-  "main": "src/main.js",
+  "main": "src/main/main.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/caozhanhao/tutor.git"

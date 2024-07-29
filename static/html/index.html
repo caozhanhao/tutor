@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <link rel="stylesheet" href="../css/mdui.css">
+    <link rel="stylesheet" href="../css/tutor.css">
+    <title>Tutor</title>
+</head>
+
+<body>
+    <mdui-layout>
+        <mdui-top-app-bar>
+            <mdui-top-app-bar-title>练习生成器</mdui-top-app-bar-title>
+            <div style="flex-grow: 1"></div>
+            <mdui-button-icon icon="settings" href="settings.html"></mdui-button-icon>
+        </mdui-top-app-bar>
+        <mdui-layout-main>
+            <mdui-list id="exer-words">
+            </mdui-list>
+        </mdui-layout-main>
+
+        <div style="position: relative;overflow: hidden;">
+            <mdui-bottom-app-bar>
+                <mdui-text-field label="单词" icon="search" id="input-word" autocomplete="off"
+                    class="autocomplete"></mdui-text-field>
+                <mdui-segmented-button-group>
+                    <mdui-segmented-button onclick="addWord()" class="exer-button" id="add-btn">添加
+                        <mdui-icon slot="icon" name="add"></mdui-icon>
+                    </mdui-segmented-button>
+                    <mdui-segmented-button onclick="genExer()" class="exer-button" id="gen-btn">生成
+                        <mdui-icon slot="icon" name="check"></mdui-icon>
+                    </mdui-segmented-button>
+                </mdui-segmented-button-group>
+            </mdui-bottom-app-bar>
+        </div>
+    </mdui-layout>
+    <script src="../js/mdui.global.js"></script>
+    <script src="../js/docx.min.js" defer></script>
+    <script src="../../src/renderer/index.js" defer></script>
+</body>
+
+</html>

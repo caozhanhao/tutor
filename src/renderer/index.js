@@ -1,27 +1,8 @@
 let allWords = new Set();
 let currentFocus = -1
 let wordsCache = {}
-let currVersion = ""
 
-mdui.setColorScheme('#0061a4');
-
-async function openGithubProfile()
-{
-    await window.tutor.openGithubProfile()
-}
-
-async function openGithubProject()
-{
-    await window.tutor.openGithubProject()
-}
-
-async function init()
-{
-    allWords = await window.tutor.getAllWords()
-    currVersion = await window.tutor.getVersion()
-}
-
-init()
+mdui.setColorScheme('#0061a4')
 
 async function lookup(word)
 {
@@ -29,83 +10,67 @@ async function lookup(word)
     return response
 }
 
-function id2bookname(id)
+async function loadVoc(id)
 {
-    switch (id)
-    {
-        case 71: return "七年级上册"
-        case 72: return "七年级下册"
-        case 81: return "八年级上册"
-        case 82: return "八年级下册"
-        case 91: return "九年级全一册"
-    }
-}
+    const response = await window.tutor.loadVoc(id)
+    if (id === 0)
+        vocstr = "初中"
+    else if (id === 1)
+        vocstr = "高中"
+    if (!response)
+        mdui.snackbar({ "message": vocstr + "词书加载错误", "placement": "top" })
+    else
+        mdui.snackbar({ "message": vocstr + "词书加载完成", "placement": "top" })
 
-function word2id(word)
-{
-    let id = word.word.replaceAll(' ', '-').replaceAll('?', '-').replaceAll('.', '-')
-        .replaceAll('·', '-').replaceAll('\'', '-').replaceAll('"', '-')
-    id += word.book.toString() + word.unit.toString()
-    return id
-}
-
-
-function id2unitname(id)
-{
-    if (id < 0) return "Starter Unit " + (-id).toString()
-    else return "Unit " + id.toString()
+    let dialog = document.getElementById("book-select-dialog")
+    dialog.open = false
+    window.sessionStorage.setItem("vocId", id)
+    allWords = await window.tutor.getAllWords()
 }
 
 function addWord()
 {
     let input = document.getElementById("input-word");
-    let word = input.value
+    let word_raw = input.value
     let list = document.getElementById("exer-words")
 
-    lookup(word).then((res) =>
+    if (document.getElementById(word_raw) != null)
+        mdui.snackbar({ "message": "单词已添加", "placement": "top" })
+
+    lookup(word_raw).then((word) =>
     {
-        res.forEach(word =>
-        {
-            let id = word2id(word)
-            wordsCache[id] = word
-            if (document.getElementById(id) === null)
-            {
-                let item = document.createElement("mdui-list-item")
-                item.classList.add("exer-word")
-                item.id = id
-                item.setAttribute('headline', word.word)
-                item.setAttribute('description', word.meaning)
-                item.innerHTML = '<mdui-segmented-button-group value="cn2en" slot="end-icon" class="exer-type" selects="single">'
-                    + '<mdui-segmented-button value="cn2en" class="cn2en-option">汉译英</mdui-segmented-button>'
-                    + '<mdui-segmented-button value="en2cn" class="en2cn-option">英译汉</mdui-segmented-button>'
-                    + '</mdui-segmented-button-group>'
-                    + '<mdui-button-icon slot="end-icon" icon="delete" target="_blank" onclick="delWord(\'' + id + '\')"></mdui-button-icon>'
-                setTimeout(function ()
-                {
-                    item.getElementsByClassName("cn2en-option")[0].addEventListener('click', (event) =>
-                    {
-                        if (event.target.parentNode.value == "cn2en")
-                            event.stopPropagation()
-                    })
-                    item.getElementsByClassName("en2cn-option")[0].addEventListener('click', (event) =>
-                    {
-                        if (event.target.parentNode.value == "en2cn")
-                            event.stopPropagation()
-                    })
-                }, 0)
-                list.append(item)
-                setTimeout(() => { window.scrollTo(0, document.documentElement.scrollHeight) }, 0)
-                input.value = '';
-            }
-            else
-            {
-                mdui.snackbar({ "message": "单词已添加", "placement": "top" })
-            }
-        })
-        if (res.length == 0)
+        if (word === null)
         {
             mdui.snackbar({ "message": "单词未找到", "placement": "top" })
+            return
         }
+        wordsCache[word.word] = word
+        let item = document.createElement("mdui-list-item")
+        item.classList.add("exer-word")
+        item.id = word.word
+        item.setAttribute('headline', word.word)
+        item.setAttribute('description', word.meaning)
+        item.innerHTML = '<mdui-segmented-button-group value="cn2en" slot="end-icon" class="exer-type" selects="single">'
+            + '<mdui-segmented-button value="cn2en" class="cn2en-option">汉译英</mdui-segmented-button>'
+            + '<mdui-segmented-button value="en2cn" class="en2cn-option">英译汉</mdui-segmented-button>'
+            + '</mdui-segmented-button-group>'
+            + '<mdui-button-icon slot="end-icon" icon="delete" target="_blank" onclick="delWord(\'' + word.word + '\')"></mdui-button-icon>'
+        setTimeout(function ()
+        {
+            item.getElementsByClassName("cn2en-option")[0].addEventListener('click', (event) =>
+            {
+                if (event.target.parentNode.value == "cn2en")
+                    event.stopPropagation()
+            })
+            item.getElementsByClassName("en2cn-option")[0].addEventListener('click', (event) =>
+            {
+                if (event.target.parentNode.value == "en2cn")
+                    event.stopPropagation()
+            })
+        }, 0)
+        list.append(item)
+        setTimeout(() => { window.scrollTo(0, document.documentElement.scrollHeight) }, 0)
+        input.value = '';
     })
 }
 
@@ -115,15 +80,11 @@ function delWord(id)
     mdui.snackbar({ "message": "单词已删除", "placement": "top" })
 }
 
-
-
 function genExer()
 {
     let exerWords = document.getElementsByClassName("exer-word")
     if (exerWords.length == 0)
-    {
         return;
-    }
 
     let exerDoc = []
     let answerDoc = [
@@ -208,93 +169,6 @@ function genExer()
         }
         document.body.removeChild(downloadLink)
     })
-}
-
-function openReleaseDialog(latestVersion, description, link)
-{
-    let dialog = document.getElementById("release-dialog")
-    let headline = document.getElementById("release-headline")
-    let descr = document.getElementById("release-description")
-    let btn = document.getElementById("release-btn")
-
-    headline.innerHTML = "Tutor v" + latestVersion
-    descr.innerHTML = description
-    btn.onclick = () => { 
-        location.href = link
-        document.getElementById("release-dialog").open = false 
-    }
-    dialog.open = true
-}
-
-function versionCmp(v1, v2)
-{
-    let a1 = v1.split('.')
-    let a2 = v2.split('.')
-    const length = Math.max(v1.length, v2.length)
-    while (v1.length < length)
-        v1.push('0')
-    while (v2.length < length)
-        v2.push('0')
-
-    for (let i = 0; i < length; i++)
-    {
-        const n1 = parseInt(v1[i])
-        const n2 = parseInt(v2[i])
-        if (n1 > n2)
-            return 1
-        else if (n1 < n2)
-            return -1
-    }
-    return 0
-}
-
-
-function checkUpdate()
-{
-    let btn = document.getElementById("check-update-btn")
-    btn.setAttribute("loading", "")
-    btn.innerHTML =  "正在检查更新"
-    const svr = "http://update.tutor.mkfs.tech/";
-    fetch(svr)
-        .then(response =>
-        {
-            btn.removeAttribute("loading")
-            btn.innerHTML = "检查更新"
-            if (!response.ok)
-                throw Error(response.status + " " + response.statusText)
-            else
-                return response.json()
-        }).then(
-            (res) =>
-            {
-                let latestVersion = res.tag_name.slice(1)
-                const cmp = versionCmp(currVersion, latestVersion)
-                if (cmp === 0)
-                    mdui.snackbar({ "message": "当前已为最新版本", "placement": "top" })
-                else if (cmp === 1)
-                {
-                    mdui.snackbar({
-                        "message": "警告：本地版本(" + currVersion + ") 比远程版本(" + latestVersion + ")更新。"
-                        , "placement": "top"
-                    })
-                }
-                else
-                {
-                    for (let i = 0; i < res.assets.length; ++i)
-                    {
-                        let n = res.assets[i].name
-                        if (n.slice(n.lastIndexOf(".")) == ".exe")
-                        {
-                            openReleaseDialog(latestVersion, res.body, svr + res.assets[i].id)
-                            return
-                        }
-                    }
-                }
-            })
-        .catch((error) =>
-        {
-            mdui.snackbar({ "message": "检查更新失败, " + error, "placement": "top" })
-        });
 }
 
 function addAutoComplete(input)
@@ -435,29 +309,33 @@ function addAutoComplete(input)
 
 window.onload = function ()
 {
+    const theme = window.sessionStorage.getItem("theme")
+    if (theme === null)
+        window.sessionStorage.setItem("theme", "auto-mode")
+
+    if (theme === "auto-mode")
+        mdui.setTheme("auto")
+    else if (theme === "light-mode")
+        mdui.setTheme("light")
+    else if (theme === "dark-mode")
+        mdui.setTheme("dark")
+
+    const vocId = window.sessionStorage.getItem("vocId")
+    if (vocId === null)
+        document.getElementById("book-select-dialog").setAttribute("open", "true")
+    else if (vocId === "0")
+        loadVoc(0)
+    else if (vocId === "1")
+        loadVoc(1)
+
+    const exer = window.sessionStorage.getItem("exer-words-cache")
+    if (exer != null)
+        document.getElementById("exer-words").innerHTML = exer
+
     addAutoComplete(document.getElementById("input-word"))
-    document.getElementsByClassName("light-mode-option")[0].addEventListener('click', (event) =>
-    {
-        if (event.target.parentNode.value == "light-mode")
-            event.stopPropagation()
-    })
-    document.getElementsByClassName("dark-mode-option")[0].addEventListener('click', (event) =>
-    {
-        if (event.target.parentNode.value == "dark-mode")
-            event.stopPropagation()
-    })
-    document.getElementsByClassName("auto-mode-option")[0].addEventListener('click', (event) =>
-    {
-        if (event.target.parentNode.value == "auto-mode")
-            event.stopPropagation()
-    })
-    document.getElementById("theme-selector").addEventListener('change', (event) =>
-    {
-        if (event.target.value == 'light-mode')
-            mdui.setTheme('light')
-        else if (event.target.value == "dark-mode")
-            mdui.setTheme('dark')
-        else if (event.target.value == "auto-mode")
-            mdui.setTheme('auto')
-    })
 }
+
+window.onbeforeunload = function ()
+{
+    window.sessionStorage.setItem("exer-words-cache", document.getElementById("exer-words").innerHTML)
+}   
