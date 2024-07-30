@@ -7,6 +7,7 @@
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <link rel="stylesheet" href="../css/mdui.css">
     <link rel="stylesheet" href="../css/tutor.css">
+    <link rel="stylesheet" href="../css/settings.css">
     <title>Tutor</title>
 </head>
 
@@ -30,6 +31,36 @@
                     </mdui-menu>
                 </mdui-dropdown>
                 <mdui-dropdown open-on-pointer>
+                    <mdui-list-item icon="translate" end-icon="unfold_more" headline="默认练习模式" description=" - "
+                        slot="trigger" id="exer-type-selector">
+                    </mdui-list-item>
+                    <mdui-menu selects="single" value="cn2en" id="exer-type-selector-value">
+                        <mdui-menu-item value="cn2en" class="cn2en-option">汉译英</mdui-menu-item>
+                        <mdui-menu-item value="en2cn" class="en2cn-option">英译汉</mdui-menu-item>
+                    </mdui-menu>
+                </mdui-dropdown>
+
+                <mdui-list-subheader>外观</mdui-list-subheader>
+                <mdui-dropdown open-on-pointer>
+                    <mdui-list-item icon="color_lens" end-icon="unfold_more" headline="配色方案" description=""
+                        slot="trigger" id="color-selector">
+                    </mdui-list-item>
+                    <mdui-card class="color-card" variant="elevated">
+                        <div class="color-label">预设颜色</div>
+                        <div class="color-preset">
+                            <div class="red"></div>
+                            <div class="purple"></div>
+                            <div class="blue"></div>
+                            <div class="green"></div>
+                            <div class="yellow"></div>
+                            <div class="grey"></div>
+                        </div>
+                        <div class="color-label">自选颜色</div>
+                        <input type="color" class="color-custom">
+                    </mdui-card>
+                </mdui-dropdown>
+
+                <mdui-dropdown open-on-pointer>
                     <mdui-list-item icon="light_mode" end-icon="unfold_more" headline="主题" description="跟随系统"
                         slot="trigger" id="theme-selector">
                     </mdui-list-item>
@@ -42,11 +73,11 @@
                 </mdui-dropdown>
 
                 <mdui-list-subheader>关于</mdui-list-subheader>
+                <mdui-list-item icon="code" end-icon="chevron_right" onclick="openGithubProfile()">开发：caozhanhao
+                </mdui-list-item>
                 <mdui-list-item icon="commit" end-icon="chevron_right" onclick="openGithubProject()"
                     id="version-info">版本：-</mdui-list-item>
                 <mdui-list-item icon="update" end-icon="chevron_right" onclick="checkUpdate()">检查更新</mdui-list-item>
-                <mdui-list-item icon="code" end-icon="chevron_right" onclick="openGithubProfile()">开发：caozhanhao
-                </mdui-list-item>
 
                 <mdui-list-subheader>高级</mdui-list-subheader>
                 <mdui-list-item icon="cloud_download" end-icon="chevron_right" headline="更新服务器" description=" - "
@@ -62,7 +93,7 @@
                     onclick="document.getElementById('release-dialog').open=false">暂不更新</mdui-button>
                 <mdui-button slot="action" variant="tonal" id="release-btn">立即更新</mdui-button>
             </mdui-dialog>
-            <mdui-dialog  id="edit-server-dialog">
+            <mdui-dialog id="edit-server-dialog">
                 <mdui-icon slot="icon" name="cloud_download"></mdui-icon>
                 <span slot="headline">修改更新服务器</span>
                 <span slot="description">警告：修改此设置可能导致检查更新失败。</span>

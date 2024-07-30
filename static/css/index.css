@@ -1,0 +1,27 @@
+
+.autocomplete-items {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 88px;
+    left: 64px;
+    max-height: var(--autocomplete-max-height);
+    overflow-y: scroll;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+    background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+    background-color: rgba(var(--mdui-color-primary-container-light)) !important;
+    color: black !important;
+    color: #ffffff;
+}

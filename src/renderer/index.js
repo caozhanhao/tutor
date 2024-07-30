@@ -3,8 +3,6 @@ let currentFocus = -1
 let wordsCache = {}
 let defaultExerType = ""
 
-mdui.setColorScheme('#0061a4')
-
 async function lookup(word)
 {
     const response = await window.tutor.lookup(word)
@@ -315,11 +313,19 @@ function addAutoComplete(input)
 
 window.onload = function ()
 {
+    let color = window.sessionStorage.getItem("color")
+    if (color === null)
+    {
+        color = '#0061a4'
+        window.sessionStorage.setItem("color", color)
+    }
+    mdui.setColorScheme(color)
+
     defaultExerType = window.sessionStorage.getItem("defaultExerType")
     if (defaultExerType === null)
     {
         defaultExerType = "cn2en"
-        window.sessionStorage.setItem("defaultExerType", "cn2en")
+        window.sessionStorage.setItem("defaultExerType", defaultExerType)
     }
 
     const theme = window.sessionStorage.getItem("theme")

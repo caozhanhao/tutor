@@ -1,0 +1,94 @@
+.color-card {
+    padding: 1rem
+}
+
+.color-label {
+    cursor: default;
+    color: rgb(var(--mdui-color-on-surface-variant));
+    font-size: var(--mdui-typescale-title-small-size);
+    font-weight: var(--mdui-typescale-title-small-weight);
+    letter-spacing: var(--mdui-typescale-title-small-tracking);
+    line-height: var(--mdui-typescale-title-small-line-height)
+}
+
+.color-label:not(:first-child) {
+    margin-top: .5rem
+}
+
+.color-preset {
+    display: flex;
+    padding: .5rem 0rem
+}
+
+.color-preset div {
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: var(--mdui-shape-corner-extra-small);
+    border: .0625rem solid rgb(var(--mdui-color-outline))
+}
+
+.color-preset div+div {
+    margin-left: .5rem
+}
+
+.color-preset .red {
+    background-color: #bb1614
+}
+
+.color-preset .purple {
+    background-color: #9a25ae
+}
+
+.color-preset .blue {
+    background-color: #0061a4
+}
+
+.color-preset .green {
+    background-color: #006e1c
+}
+
+.color-preset .yellow {
+    background-color: #695f00
+}
+
+.color-preset .grey {
+    background-color: #006874
+}
+
+.mdui-theme-dark .color-preset .red {
+    background-color: #ffb4aa
+}
+
+.mdui-theme-dark .color-preset .purple {
+    background-color: #f9abff
+}
+
+.mdui-theme-dark .color-preset .blue {
+    background-color: #9ecaff
+}
+
+.mdui-theme-dark .color-preset .green {
+    background-color: #78dc77
+}
+
+.mdui-theme-dark .color-preset .yellow {
+    background-color: #dbc90a
+}
+
+.mdui-theme-dark .color-preset .grey {
+    background-color: #4fd8eb
+}
+
+
+
+.color-custom {
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: var(--mdui-shape-corner-extra-small);
+    border: .0625rem solid rgb(var(--mdui-color-outline));
+    margin: .5rem 0rem
+}
