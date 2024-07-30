@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron/main')
 const path = require('node:path')
 const { shell } = require('electron')
-const isDev = import('electron-is-dev')
 
 let voc = []
 
@@ -49,8 +48,7 @@ const createWindow = () =>
             preload: path.join(__dirname, 'preload.js')
         },
     })
-    if (!isDev)
-        win.setMenu(null)
+    //win.setMenu(null)
     win.loadFile(path.join(__dirname, '..', '..', 'static', 'html', 'index.html'))
 }
 
