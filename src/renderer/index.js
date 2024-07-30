@@ -1,6 +1,7 @@
 let allWords = new Set();
 let currentFocus = -1
 let wordsCache = {}
+let defaultExerType = ""
 
 mdui.setColorScheme('#0061a4')
 
@@ -28,6 +29,35 @@ async function loadVoc(id)
     allWords = await window.tutor.getAllWords()
 }
 
+function addWordHTML(list, word, exerType)
+{
+    let item = document.createElement("mdui-list-item")
+    item.classList.add("exer-word")
+    item.id = word.word
+    item.setAttribute('headline', word.word)
+    item.setAttribute('description', word.meaning)
+    item.innerHTML = '<mdui-segmented-button-group value="' + exerType + '" slot="end-icon" class="exer-type" selects="single">'
+        + '<mdui-segmented-button value="cn2en" class="cn2en-option">汉译英</mdui-segmented-button>'
+        + '<mdui-segmented-button value="en2cn" class="en2cn-option">英译汉</mdui-segmented-button>'
+        + '</mdui-segmented-button-group>'
+        + '<mdui-button-icon slot="end-icon" icon="delete" target="_blank" onclick="delWord(\'' + word.word + '\')"></mdui-button-icon>'
+    setTimeout(function ()
+    {
+        item.getElementsByClassName("cn2en-option")[0].addEventListener('click', (event) =>
+        {
+            if (event.target.parentNode.value == "cn2en")
+                event.stopPropagation()
+        })
+        item.getElementsByClassName("en2cn-option")[0].addEventListener('click', (event) =>
+        {
+            if (event.target.parentNode.value == "en2cn")
+                event.stopPropagation()
+        })
+    }, 0)
+    list.append(item)
+    setTimeout(() => { window.scrollTo(0, document.documentElement.scrollHeight) }, 0)
+}
+
 function addWord()
 {
     let input = document.getElementById("input-word");
@@ -45,31 +75,7 @@ function addWord()
             return
         }
         wordsCache[word.word] = word
-        let item = document.createElement("mdui-list-item")
-        item.classList.add("exer-word")
-        item.id = word.word
-        item.setAttribute('headline', word.word)
-        item.setAttribute('description', word.meaning)
-        item.innerHTML = '<mdui-segmented-button-group value="cn2en" slot="end-icon" class="exer-type" selects="single">'
-            + '<mdui-segmented-button value="cn2en" class="cn2en-option">汉译英</mdui-segmented-button>'
-            + '<mdui-segmented-button value="en2cn" class="en2cn-option">英译汉</mdui-segmented-button>'
-            + '</mdui-segmented-button-group>'
-            + '<mdui-button-icon slot="end-icon" icon="delete" target="_blank" onclick="delWord(\'' + word.word + '\')"></mdui-button-icon>'
-        setTimeout(function ()
-        {
-            item.getElementsByClassName("cn2en-option")[0].addEventListener('click', (event) =>
-            {
-                if (event.target.parentNode.value == "cn2en")
-                    event.stopPropagation()
-            })
-            item.getElementsByClassName("en2cn-option")[0].addEventListener('click', (event) =>
-            {
-                if (event.target.parentNode.value == "en2cn")
-                    event.stopPropagation()
-            })
-        }, 0)
-        list.append(item)
-        setTimeout(() => { window.scrollTo(0, document.documentElement.scrollHeight) }, 0)
+        addWordHTML(list, word, defaultExerType)
         input.value = '';
     })
 }
@@ -309,6 +315,13 @@ function addAutoComplete(input)
 
 window.onload = function ()
 {
+    defaultExerType = window.sessionStorage.getItem("defaultExerType")
+    if (defaultExerType === null)
+    {
+        defaultExerType = "cn2en"
+        window.sessionStorage.setItem("defaultExerType", "cn2en")
+    }
+
     const theme = window.sessionStorage.getItem("theme")
     if (theme === null)
         window.sessionStorage.setItem("theme", "auto-mode")
@@ -328,14 +341,27 @@ window.onload = function ()
     else if (vocId === "1")
         loadVoc(1)
 
-    const exer = window.sessionStorage.getItem("exer-words-cache")
-    if (exer != null)
-        document.getElementById("exer-words").innerHTML = exer
-
+    const cache = JSON.parse(window.sessionStorage.getItem("exer-cache"))
+    if (cache != null)
+    {
+        wordsCache = cache.wordsCache
+        let list = document.getElementById("exer-words")
+        for (let i = 0; i < cache.exerWords.length; ++i)
+        {
+            addWordHTML(list, wordsCache[cache.exerWords[i].id], cache.exerWords[i].exerType)
+        }
+    }
     addAutoComplete(document.getElementById("input-word"))
 }
 
 window.onbeforeunload = function ()
 {
-    window.sessionStorage.setItem("exer-words-cache", document.getElementById("exer-words").innerHTML)
+    let cache = { "wordsCache": wordsCache, "exerWords": [] }
+    let exerWords = document.getElementsByClassName("exer-word")
+    for (let i = 0; i < exerWords.length; ++i)
+    {
+        let exerType = exerWords[i].getElementsByClassName("exer-type")[0].value
+        cache.exerWords.push({ "exerType": exerType, "id": exerWords[i].id })
+    }
+    window.sessionStorage.setItem("exer-cache", JSON.stringify(cache))
 }   

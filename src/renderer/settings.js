@@ -1,5 +1,5 @@
 let currVersion = ""
-const updateServer = "http://update.tutor.mkfs.tech/"
+let updateServer = ""
 
 mdui.setColorScheme('#0061a4')
 
@@ -55,6 +55,8 @@ function versionCmp(v1, v2)
 
 function checkUpdate()
 {
+    if (updateServer.slice(-1) != "/")
+        updateServer += "/"
     mdui.snackbar({ "message": "正在检查更新", "placement": "top" })
     fetch(updateServer)
         .then(response =>
@@ -96,8 +98,23 @@ function checkUpdate()
         });
 }
 
+function editUpdateServer()
+{
+    updateServer = document.getElementById("update-server-value").value
+    window.sessionStorage.setItem("updateServer", updateServer)
+    document.getElementById("update-server-editor").setAttribute("description", updateServer)
+    document.getElementById('edit-server-dialog').open = false
+}
+
 window.onload = function ()
 {
+    updateServer = window.sessionStorage.getItem("updateServer")
+    if (updateServer === null)
+        updateServer = "http://update.tutor.mkfs.tech/"
+
+    document.getElementById("update-server-editor").setAttribute("description", updateServer)
+    document.getElementById("update-server-value").value = updateServer
+
     window.tutor.getVersion().then((version) =>
     {
         currVersion = version
@@ -133,12 +150,12 @@ window.onload = function ()
         document.getElementById("theme-selector-value").value = "dark-mode"
     }
 
-    document.getElementById("voc0-option").addEventListener('click', (event) =>
+    document.getElementsByClassName("voc0-option")[0].addEventListener('click', (event) =>
     {
         if (event.target.parentNode.value == "voc0")
             event.stopPropagation()
     })
-    document.getElementById("voc1-option").addEventListener('click', (event) =>
+    document.getElementsByClassName("voc1-option")[0].addEventListener('click', (event) =>
     {
         if (event.target.parentNode.value == "voc1")
             event.stopPropagation()
@@ -157,17 +174,17 @@ window.onload = function ()
         }
     })
 
-    document.getElementById("light-mode-option").addEventListener('click', (event) =>
+    document.getElementsByClassName("light-mode-option")[0].addEventListener('click', (event) =>
     {
         if (event.target.parentNode.value == "light-mode")
             event.stopPropagation()
     })
-    document.getElementById("dark-mode-option").addEventListener('click', (event) =>
+    document.getElementsByClassName("dark-mode-option")[0].addEventListener('click', (event) =>
     {
         if (event.target.parentNode.value == "dark-mode")
             event.stopPropagation()
     })
-    document.getElementById("auto-mode-option").addEventListener('click', (event) =>
+    document.getElementsByClassName("auto-mode-option")[0].addEventListener('click', (event) =>
     {
         if (event.target.parentNode.value == "auto-mode")
             event.stopPropagation()

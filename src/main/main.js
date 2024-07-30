@@ -22,7 +22,7 @@ function loadVoc(id)
 
 function lookup(w)
 {
-    for (let i = 0; i < voc.length; i += 1)
+    for (let i = 0; i < voc.length; ++i)
     {
         if (voc[i].word == w)
             return voc[i]

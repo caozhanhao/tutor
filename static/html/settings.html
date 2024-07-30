@@ -20,24 +20,24 @@
         <mdui-layout-main>
             <mdui-list>
                 <mdui-list-subheader>应用</mdui-list-subheader>
-                <mdui-dropdown>
-                    <mdui-list-item icon="book" end-icon="unfold_more" headline="当前词书" description="初中" slot="trigger"
+                <mdui-dropdown open-on-pointer>
+                    <mdui-list-item icon="book" end-icon="unfold_more" headline="当前词书" description=" - " slot="trigger"
                         id="voc-selector">
                     </mdui-list-item>
                     <mdui-menu selects="single" value="voc0" id="voc-selector-value">
-                        <mdui-menu-item value="voc0" id="voc0-option">初中</mdui-menu-item>
-                        <mdui-menu-item value="voc1" id="voc1-option">高中</mdui-menu-item>
+                        <mdui-menu-item value="voc0" class="voc0-option">初中</mdui-menu-item>
+                        <mdui-menu-item value="voc1" class="voc1-option">高中</mdui-menu-item>
                     </mdui-menu>
                 </mdui-dropdown>
-                <mdui-dropdown>
+                <mdui-dropdown open-on-pointer>
                     <mdui-list-item icon="light_mode" end-icon="unfold_more" headline="主题" description="跟随系统"
                         slot="trigger" id="theme-selector">
                     </mdui-list-item>
                     <mdui-menu selects="single" value="auto-mode" id="theme-selector-value">
-                        <mdui-menu-item value="light-mode" id="light-mode-option">亮色模式</mdui-menu-item>
-                        <mdui-menu-item value="dark-mode" id="dark-mode-option">暗色模式</mdui-menu-item>
+                        <mdui-menu-item value="light-mode" class="light-mode-option">亮色模式</mdui-menu-item>
+                        <mdui-menu-item value="dark-mode" class="dark-mode-option">暗色模式</mdui-menu-item>
                         <mdui-divider></mdui-divider>
-                        <mdui-menu-item value="auto-mode" id="auto-mode-option">跟随系统</mdui-menu-item>
+                        <mdui-menu-item value="auto-mode" class="auto-mode-option">跟随系统</mdui-menu-item>
                     </mdui-menu>
                 </mdui-dropdown>
 
@@ -49,8 +49,8 @@
                 </mdui-list-item>
 
                 <mdui-list-subheader>高级</mdui-list-subheader>
-                <mdui-list-item icon="cloud_download" end-icon="chevron_right" headline="更新服务器"
-                    description="http://update.tutor.mkfs.tech" id="update-server">
+                <mdui-list-item icon="cloud_download" end-icon="chevron_right" headline="更新服务器" description=" - "
+                    id="update-server-editor" onclick="document.getElementById('edit-server-dialog').open=true">
                 </mdui-list-item>
 
             </mdui-list>
@@ -61,6 +61,15 @@
                 <mdui-button slot="action" variant="tonal"
                     onclick="document.getElementById('release-dialog').open=false">暂不更新</mdui-button>
                 <mdui-button slot="action" variant="tonal" id="release-btn">立即更新</mdui-button>
+            </mdui-dialog>
+            <mdui-dialog  id="edit-server-dialog">
+                <mdui-icon slot="icon" name="cloud_download"></mdui-icon>
+                <span slot="headline">修改更新服务器</span>
+                <span slot="description">警告：修改此设置可能导致检查更新失败。</span>
+                <mdui-text-field label="更新服务器" value=" - " id="update-server-value"></mdui-text-field>
+                <mdui-button slot="action" variant="tonal"
+                    onclick="document.getElementById('edit-server-dialog').open=false">取消</mdui-button>
+                <mdui-button slot="action" variant="tonal" onclick="editUpdateServer()">确定</mdui-button>
             </mdui-dialog>
         </mdui-layout-main>
     </mdui-layout>

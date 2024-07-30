@@ -13,11 +13,22 @@
 <body>
     <mdui-layout>
         <mdui-top-app-bar>
+            <mdui-button-icon icon="fact_check" href="index.html"></mdui-button-icon>
             <mdui-top-app-bar-title>练习生成器</mdui-top-app-bar-title>
             <div style="flex-grow: 1"></div>
             <mdui-button-icon icon="settings" href="settings.html"></mdui-button-icon>
         </mdui-top-app-bar>
         <mdui-layout-main>
+            <mdui-dialog id="book-select-dialog">
+                <mdui-icon slot="icon" name="book"></mdui-icon>
+                <span slot="headline">选择词书</span>
+                <span slot="description">
+                    初中词书为人教版七年级至九年级词汇 <br>
+                    高中词书为新高考词汇 <br><br>
+                </span>
+                <mdui-button slot="action" variant="tonal" onclick="loadVoc(0)">初中</mdui-button>
+                <mdui-button slot="action" variant="tonal" onclick="loadVoc(1)">高中</mdui-button>
+            </mdui-dialog>
             <mdui-list id="exer-words">
             </mdui-list>
         </mdui-layout-main>
