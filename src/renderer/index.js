@@ -34,7 +34,14 @@ function addWordHTML(list, word, exerType)
     item.id = word.word
     item.setAttribute('headline', word.word)
     item.setAttribute('description', word.meaning)
-    item.innerHTML = '<mdui-segmented-button-group value="' + exerType + '" slot="end-icon" class="exer-type" selects="single">'
+    item.innerHTML =
+        //     '<mdui-dropdown  slot="icon"><mdui-menu>'
+        //     + '<mdui-menu-item onclick=moveUp(' + word.word + ')>上移</mdui-menu-item>' 
+        //     + '<mdui-menu-item onclick=moveDown(' + word.word + ')>下移</mdui-menu-item></mdui-menu>' 
+        //     + '<mdui-chip slot="trigger" icon="adjust">' + list.childNodes.length + '</mdui-chip>'
+        //     + '</mdui-dropdown>'
+        '<mdui-chip slot="icon" icon="adjust">' + list.childNodes.length + '</mdui-chip>'
+        + '<mdui-segmented-button-group value="' + exerType + '" slot="end-icon" class="exer-type" selects="single">'
         + '<mdui-segmented-button value="cn2en" class="cn2en-option">汉译英</mdui-segmented-button>'
         + '<mdui-segmented-button value="en2cn" class="en2cn-option">英译汉</mdui-segmented-button>'
         + '</mdui-segmented-button-group>'
@@ -63,7 +70,10 @@ function addWord()
     let list = document.getElementById("exer-words")
 
     if (document.getElementById(word_raw) != null)
+    {
         mdui.snackbar({ "message": "单词已添加", "placement": "top" })
+        return
+    }
 
     lookup(word_raw).then((word) =>
     {
@@ -83,6 +93,15 @@ function delWord(id)
     document.getElementById(id).remove()
     mdui.snackbar({ "message": "单词已删除", "placement": "top" })
 }
+
+// function moveUp(id)
+// {
+// }
+
+// function moveDown(id)
+// {
+
+// }
 
 function genExer()
 {
