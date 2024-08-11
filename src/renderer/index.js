@@ -35,17 +35,17 @@ function addWordHTML(list, word, exerType)
     item.setAttribute('headline', word.word)
     item.setAttribute('description', word.meaning)
     item.innerHTML =
-        //     '<mdui-dropdown  slot="icon"><mdui-menu>'
-        //     + '<mdui-menu-item onclick=moveUp(' + word.word + ')>上移</mdui-menu-item>' 
-        //     + '<mdui-menu-item onclick=moveDown(' + word.word + ')>下移</mdui-menu-item></mdui-menu>' 
-        //     + '<mdui-chip slot="trigger" icon="adjust">' + list.childNodes.length + '</mdui-chip>'
-        //     + '</mdui-dropdown>'
-        '<mdui-chip slot="icon" icon="adjust">' + list.childNodes.length + '</mdui-chip>'
+        '<mdui-dropdown  slot="icon" class="word-edit-menu">'
+        + '<mdui-menu><mdui-menu-item onclick="moveUp(\'' + word.word + '\')" icon="move_up"><p>上移</p></mdui-menu-item>'
+        + '<mdui-menu-item onclick="moveDown(\'' + word.word + '\')" icon="move_down"><p>下移</p></mdui-menu-item>'
+        + '<mdui-menu-item onclick="moveTo(\'' + word.word + '\')" icon="import_export"><p>移至</p></mdui-menu-item></mdui-menu>'
+        + '<mdui-chip slot="trigger" icon="adjust" class="list-number">' + list.childNodes.length + '</mdui-chip>'
+        + '</mdui-dropdown>'
         + '<mdui-segmented-button-group value="' + exerType + '" slot="end-icon" class="exer-type" selects="single">'
         + '<mdui-segmented-button value="cn2en" class="cn2en-option">汉译英</mdui-segmented-button>'
         + '<mdui-segmented-button value="en2cn" class="en2cn-option">英译汉</mdui-segmented-button>'
         + '</mdui-segmented-button-group>'
-        + '<mdui-button-icon slot="end-icon" icon="delete" target="_blank" onclick="delWord(\'' + word.word + '\')"></mdui-button-icon>'
+        + '<mdui-button-icon style="margin-left:8px;" slot="end-icon" icon="delete" target="_blank" onclick="delWord(\'' + word.word + '\')"></mdui-button-icon>'
     setTimeout(function ()
     {
         item.getElementsByClassName("cn2en-option")[0].addEventListener('click', (event) =>
@@ -84,24 +84,81 @@ function addWord()
         }
         wordsCache[word.word] = word
         addWordHTML(list, word, defaultExerType)
-        input.value = '';
+        input.value = ''
     })
+}
+
+function updateNumber()
+{
+    let list = document.getElementsByClassName("list-number")
+    if (list.length != 0)
+    {
+        for (var i = 0; i < list.length; i++)
+        {
+            list[i].innerHTML = i + 1;
+        }
+    }
 }
 
 function delWord(id)
 {
     document.getElementById(id).remove()
     mdui.snackbar({ "message": "单词已删除", "placement": "top" })
+    updateNumber()
 }
 
-// function moveUp(id)
-// {
-// }
+function moveUp(id)
+{
+    let x = document.getElementById(id)
+    x.getElementsByClassName("word-edit-menu")[0].setAttribute("open", false)
+    if (x === null || x.previousElementSibling === null) return
+    if (x.previousElementSibling != null)
+        x.parentElement.insertBefore(x, x.previousElementSibling)
+    else
+        x.parentElement.insertBefore(x, x.parentElement.firstChild)
+    updateNumber()
+}
 
-// function moveDown(id)
-// {
+function moveDown(id)
+{
+    let x = document.getElementById(id)
+    x.getElementsByClassName("word-edit-menu")[0].setAttribute("open", false)
+    if (x === null || x.nextElementSibling === null) return
+    if (x.nextElementSibling != null)
+        x.parentElement.insertBefore(x, x.nextElementSibling.nextElementSibling)
+    updateNumber()
+}
 
-// }
+function moveTo(id)
+{
+    let x = document.getElementById(id)
+    x.getElementsByClassName("word-edit-menu")[0].setAttribute("open", false)
+    let dialog = document.getElementById("moveto-dialog")
+    let headline = document.getElementById("moveto-headline")
+    let btn = document.getElementsByClassName("moveto-btn")[0]
+    btn.id = id
+    document.getElementById("moveto-value").value = ""
+    headline.innerHTML = "移动 '" + wordsCache[id].word + "'"
+
+    btn.addEventListener('click', (event) =>
+    {
+        document.getElementById("moveto-dialog").open = false
+        let value = parseInt(document.getElementById("moveto-value").value)
+        if (!Number.isNaN(value)) 
+        {
+            let list = document.getElementById("exer-words")
+            let x = document.getElementById(event.target.id)
+            if (value <= 0)
+                list.insertBefore(x, x.parentElement.firstChild)
+            else if (value <= list.childElementCount)
+                list.insertBefore(x, list.children[value])
+            else
+                list.insertBefore(x, null)
+            updateNumber()
+        }
+    })
+    dialog.open = true
+}
 
 function genExer()
 {
@@ -213,6 +270,7 @@ function addAutoComplete(input)
             let pos = word.toUpperCase().indexOf(this.value.toUpperCase())
             if (pos !== -1)
             {
+                if(document.getElementById(word) != null) return
                 let b = document.createElement("div")
                 b.innerHTML = word.slice(0, pos) + "<strong>" + word.slice(pos, pos + this.value.length)
                     + "</strong>" + word.slice(pos + this.value.length)

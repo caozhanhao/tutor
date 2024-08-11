@@ -32,6 +32,17 @@
             </mdui-dialog>
             <mdui-list id="exer-words">
             </mdui-list>
+
+            <mdui-dialog close-on-esc close-on-overlay-click id="moveto-dialog">
+                <mdui-icon slot="icon" name="import_export"></mdui-icon>
+                <span slot="headline" id="moveto-headline"></span>
+                <span slot="description">
+                    <mdui-text-field label="移动至" id="moveto-value"></mdui-text-field>
+                </span>
+                <mdui-button slot="action" variant="tonal"
+                    onclick="document.getElementById('moveto-dialog').open=false">关闭</mdui-button>
+                <mdui-button slot="action" variant="tonal" class="moveto-btn">确定</mdui-button>
+            </mdui-dialog>
         </mdui-layout-main>
 
         <div style="position: relative;overflow: hidden;">
